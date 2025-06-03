@@ -1,0 +1,16 @@
+body {
+    font-size: 1.25rem;
+}
+
+.avatar {
+    max-width: 100%;
+}
+
+.post-image {
+    max-width: 60%;
+}
+
+.comment-image {
+    max-width: 50px;
+    max-height: 50px;
+}

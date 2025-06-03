@@ -1,0 +1,63 @@
+{% extends 'base.html'  %}
+
+
+{% block content %}
+
+<h1 class="mt-5">{{post.title}}</h1>
+<div class="mb-3 text-muted">{{post.author}}, {{post.date.strftime('%d.%m.%Y %H:%M')}} </div>
+<div class="text-center">
+    <img class="post-image" src="{{url_for('static', filename='images/'+post.image_id)}}" alt="post-image">
+    <div class="md-5" style="text-align: justify;">
+        <p>
+            {{post.text}}
+        </p>
+    </div>
+</div>
+<div class="container-fluid">
+    <form>
+        <div class="mb-3">
+            <label for="commentTextArea" class="form-label">Оставьте комментарий</label>
+            <textarea class="form-control" id="commentTextArea" rows="3"></textarea>
+        </div>
+        <button type="submit" class="btn btn-primary">Отправить</button>
+        </form>
+</div>
+
+<br>
+{% for com in post.comments %}
+<div class="d-flex">
+
+    <div class="flex-shrink-0">
+        <img src="{{url_for('static', filename='images/avatar.jpg')}}" class="rounded-circle comment-image" alt="Sample Image">
+    </div>
+    <div class="flex-grow-1 ms-3">
+        
+        <h5>{{com.author}}<small class="text-muted"></small></h5>
+        <p>{{com.text}}</p>
+        
+
+        {% for reply in com.replies %}
+            
+        <div class="d-flex mt-4">
+            <div class="flex-shrink-0">
+                <img src="{{url_for('static', filename='images/avatar.jpg')}}" class="rounded-circle comment-image" alt="Sample Image">
+            </div>
+            <div class="flex-grow-1 ms-3">
+                
+                <h5>{{reply.author}}<small class="text-muted"></small></h5>
+                <p>{{reply.text}}</p>
+            </div>
+        </div>
+        {% endfor %}
+        
+    </div>
+
+    
+
+</div>
+{% endfor %}
+
+
+
+
+{% endblock %}

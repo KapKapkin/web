@@ -1,0 +1,42 @@
+greeting_format
+
+2024-02-19 16:00:12.670738
+
+('John',)
+
+Hello, John!
+
+2024-02-19 16:00:12.670741
+
+0:00:00.000003greeting_format
+2025-04-23 20:28:15.536016
+Positional args: ('John',)
+Keyword args: {}
+Return value: Hello, John!
+2025-04-23 20:28:15.536020
+0:00:00.000004
+
+greeting_format
+2025-04-23 20:28:19.571369
+Positional args: ('John',)
+Keyword args: {}
+Return value: Hello, John!
+2025-04-23 20:28:19.571374
+0:00:00.000005
+
+greeting_format
+2025-04-23 20:28:36.465916
+Positional args: ('John',)
+Keyword args: {}
+Return value: Hello, John!
+2025-04-23 20:28:36.465919
+0:00:00.000003
+
+greeting_format
+2025-04-23 20:28:49.775952
+Positional args: ('John',)
+Keyword args: {}
+Return value: Hello, John!
+2025-04-23 20:28:49.775955
+0:00:00.000003
+
