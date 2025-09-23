@@ -5,8 +5,9 @@ from faker import Faker
 
 fake = Faker()
 
-app = Flask(__name__)
-application = app
+app = Flask(__name__, 
+           template_folder='templates',
+           static_folder='app/static')
 
 images_ids = ['7d4e9175-95ea-4c5f-8be5-92a6b708bb3c',
               '2d2ab7df-cdbc-48a8-a936-35bba702def5',
@@ -17,7 +18,7 @@ images_ids = ['7d4e9175-95ea-4c5f-8be5-92a6b708bb3c',
 def generate_comments(replies=True):
     comments = []
     for _ in range(random.randint(1, 3)):
-        comment = { 'author': fake.name(), 'text': fake.text() }
+        comment = {'author': fake.name(), 'text': fake.text()}
         if replies:
             comment['replies'] = generate_comments(replies=False)
         comments.append(comment)

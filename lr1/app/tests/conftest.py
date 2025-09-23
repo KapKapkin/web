@@ -24,22 +24,39 @@ def captured_templates(app):
     finally:
         template_rendered.disconnect(record, app)
 
-POST_LIST = [
+@pytest.fixture
+def posts_list():
+    return [
         {
             'title': 'Заголовок поста',
-            'text': 'Текст поста',
+            'text': 'Текст поста для тестирования',
             'author': 'Иванов Иван Иванович',
-            'date': datetime(2025, 3, 10, 17, 11, 22),
+            'date': datetime(2025, 3, 10, 14, 30),
             'image_id': '123.jpg',
-            'comments': [{"author": "Oleg Khudykov", "text": "Норм пост такой"}]
+            'comments': [
+                {
+                    'author': 'Петров Петр',
+                    'text': 'Отличный пост!',
+                    'replies': [
+                        {
+                            'author': 'Сидоров Сидор',
+                            'text': 'Согласен!'
+                        }
+                    ]
+                }
+            ]
         }
     ]
 
 @pytest.fixture
-def posts_list():
-    return POST_LIST
-
-@pytest.fixture(autouse=True)
-def mock_posts_list(mocker):
-    mock = mocker.patch("app.posts_list", autospec=True, return_value=POST_LIST)
-    return mock
+def posts_list_no_comments():
+    return [
+        {
+            'title': 'Пост без комментариев',
+            'text': 'Текст поста без комментариев',
+            'author': 'Автор Тест',
+            'date': datetime(2025, 1, 15, 10, 45),
+            'image_id': 'test.jpg',
+            'comments': []
+        }
+    ]
