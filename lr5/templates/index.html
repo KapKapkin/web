@@ -1,0 +1,94 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Система управления пользователями{% endblock %}
+
+{% block page_header %}
+<div class="row">
+    <div class="col-12">
+        <h1 class="display-4 text-center mb-4">Система управления пользователями</h1>
+    </div>
+</div>
+{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-8">
+        <div class="card shadow">
+            <div class="card-body p-5">
+                <div class="text-center mb-4">
+                    <i class="bi bi-people-fill text-primary" style="font-size: 4rem;"></i>
+                </div>
+                
+                <h2 class="text-center mb-4">Добро пожаловать!</h2>
+                
+                <p class="lead text-center mb-4">
+                    Система управления пользователями с авторизацией и журналом посещений.
+                </p>
+                
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 border-primary">
+                            <div class="card-body text-center">
+                                <i class="bi bi-shield-check text-primary mb-3" style="font-size: 2rem;"></i>
+                                <h5 class="card-title">Безопасность</h5>
+                                <p class="card-text">Система ролей и проверка прав доступа</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="col-md-6 mb-3">
+                        <div class="card h-100 border-success">
+                            <div class="card-body text-center">
+                                <i class="bi bi-graph-up text-success mb-3" style="font-size: 2rem;"></i>
+                                <h5 class="card-title">Аналитика</h5>
+                                <p class="card-text">Журнал посещений и статистические отчеты</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="text-center mt-4">
+                    <div class="btn-group" role="group">
+                        <a href="{{ url_for('auth.login') }}" class="btn btn-primary btn-lg">
+                            <i class="bi bi-box-arrow-in-right"></i> Войти в систему
+                        </a>
+                        <a href="{{ url_for('auth.register') }}" class="btn btn-outline-primary btn-lg">
+                            <i class="bi bi-person-plus"></i> Регистрация
+                        </a>
+                    </div>
+                </div>
+                
+                <hr class="my-4">
+                
+                <div class="row text-center">
+                    <div class="col-md-4">
+                        <h6><i class="bi bi-people text-muted"></i> Управление пользователями</h6>
+                        <small class="text-muted">CRUD операции с пользователями</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h6><i class="bi bi-key text-muted"></i> Система ролей</h6>
+                        <small class="text-muted">Администраторы и пользователи</small>
+                    </div>
+                    <div class="col-md-4">
+                        <h6><i class="bi bi-clock-history text-muted"></i> Журнал посещений</h6>
+                        <small class="text-muted">Отслеживание активности</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Информационная секция -->
+<div class="row mt-5">
+    <div class="col-12">
+        <div class="alert alert-info" role="alert">
+            <h5><i class="bi bi-info-circle"></i> Тестовые учетные записи:</h5>
+            <ul class="mb-0">
+                <li><strong>Администратор:</strong> admin / admin123</li>
+                <li><strong>Пользователь:</strong> user / user123</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

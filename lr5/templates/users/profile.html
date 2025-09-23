@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+
+{% block title %}Профиль{% endblock %}
+
+{% block content %}
+<h1>Мой профиль</h1>
+<div class="card">
+    <div class="card-body">
+        <p><strong>Логин:</strong> {{ user.username }}</p>
+        <p><strong>Полное имя:</strong> {{ user.full_name }}</p>
+        <p><strong>Роль:</strong> {{ user.role.name if user.role else 'Не назначена' }}</p>
+        <p><strong>Дата регистрации:</strong> {{ user.created_at.strftime('%d.%m.%Y %H:%M:%S') }}</p>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a href="{{ url_for('main.edit_user', user_id=user.id) }}" class="btn btn-primary">Редактировать</a>
+    <a href="{{ url_for('main.change_password') }}" class="btn btn-warning">Сменить пароль</a>
+</div>
+{% endblock %}
