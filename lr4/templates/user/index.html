@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+
+{% block title %}Главная - Управление пользователями{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-md-12">
+        <h1>Система управления пользователями</h1>
+        <p class="lead">Добро пожаловать в систему управления учетными записями пользователей.</p>
+        
+        {% if current_user.is_authenticated %}
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Пользователи</h5>
+                            <p class="card-text">Управление учетными записями пользователей</p>
+                            <a href="{{ url_for('main.index') }}" class="btn btn-primary">Список пользователей</a>
+                        </div>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="card">
+                        <div class="card-body">
+                            <h5 class="card-title">Создать пользователя</h5>
+                            <p class="card-text">Добавить нового пользователя в систему</p>
+                            <a href="{{ url_for('main.create_user') }}" class="btn btn-success">Создать</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="mt-4">
+                <h3>Список пользователей</h3>
+                {% if users %}
+                <div class="table-responsive">
+                    <table class="table table-striped">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Имя пользователя</th>
+                                <th>ФИО</th>
+                                <th>Роль</th>
+                                <th>Действия</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for user in users %}
+                            <tr>
+                                <td>{{ user.id }}</td>
+                                <td>{{ user.username }}</td>
+                                <td>{{ user.last_name }} {{ user.first_name }} {{ user.middle_name or '' }}</td>
+                                <td>{{ user.role.name if user.role else 'Не назначена' }}</td>
+                                <td>
+                                    <a href="{{ url_for('main.view_user', user_id=user.id) }}" class="btn btn-sm btn-info">Просмотр</a>
+                                    <a href="{{ url_for('main.edit_user', user_id=user.id) }}" class="btn btn-sm btn-warning">Редактировать</a>
+                                    {% if user.id != current_user.id %}
+                                    <form method="post" action="{{ url_for('main.delete_user', user_id=user.id) }}" class="d-inline" onsubmit="return confirm('Вы уверены что хотите удалить этого пользователя?')">
+                                        <button type="submit" class="btn btn-sm btn-danger">Удалить</button>
+                                    </form>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% else %}
+                <div class="alert alert-info">
+                    Пользователи не найдены.
+                </div>
+                {% endif %}
+            </div>
+        {% else %}
+            <div class="alert alert-warning">
+                <h4>Необходима авторизация</h4>
+                <p>Для работы с системой управления пользователями необходимо войти в систему.</p>
+                <a href="{{ url_for('auth.login') }}" class="btn btn-primary">Войти</a>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-secondary">Регистрация</a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

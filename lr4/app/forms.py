@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SelectField, SubmitField
-from wtforms.validators import DataRequired, Length, Regexp, ValidationError
+from wtforms import StringField, PasswordField, SelectField, SubmitField, BooleanField
+from wtforms.validators import DataRequired, Length, Regexp, ValidationError, EqualTo
+from app.models import User
 import re
 
 def validate_password(form, field):
@@ -39,8 +40,29 @@ class UserForm(FlaskForm):
     submit = SubmitField('Save')
 
 class UserEditForm(FlaskForm):
-    last_name = StringField('Last Name')
-    first_name = StringField('First Name', validators=[DataRequired()])
-    middle_name = StringField('Middle Name')
-    role_id = SelectField('Role', coerce=int)
-    submit = SubmitField('Save')
+    username = StringField('Имя пользователя', validators=[DataRequired(), Length(min=3, max=50)])
+    first_name = StringField('Имя', validators=[DataRequired(), Length(min=1, max=50)])
+    last_name = StringField('Фамилия', validators=[DataRequired(), Length(min=1, max=50)])
+    middle_name = StringField('Отчество', validators=[Length(max=50)])
+    role_id = SelectField('Роль', coerce=int, validators=[DataRequired()])
+    password = PasswordField('Новый пароль', validators=[Length(min=8, max=128)])
+    confirm_password = PasswordField('Подтвердить пароль', validators=[EqualTo('password')])
+    submit = SubmitField('Обновить')
+
+class LoginForm(FlaskForm):
+    username = StringField('Имя пользователя', validators=[DataRequired()])
+    password = PasswordField('Пароль', validators=[DataRequired()])
+    remember = BooleanField('Запомнить меня')
+    submit = SubmitField('Войти')
+
+class RegistrationForm(FlaskForm):
+    username = StringField('Имя пользователя', validators=[DataRequired(), Length(min=3, max=50)])
+    password = PasswordField('Пароль', validators=[DataRequired(), Length(min=8, max=128)])
+    confirm_password = PasswordField('Подтвердить пароль', validators=[DataRequired(), EqualTo('password')])
+    submit = SubmitField('Зарегистрироваться')
+
+class ChangePasswordForm(FlaskForm):
+    old_password = PasswordField('Текущий пароль', validators=[DataRequired()])
+    new_password = PasswordField('Новый пароль', validators=[DataRequired(), Length(min=8, max=128)])
+    confirm_password = PasswordField('Подтвердить новый пароль', validators=[DataRequired(), EqualTo('new_password')])
+    submit = SubmitField('Изменить пароль')
