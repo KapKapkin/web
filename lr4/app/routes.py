@@ -20,7 +20,7 @@ def view_user(user_id):
 def create_user():
     form = UserForm()
     form.role_id.choices = [(r.id, r.name) for r in Role.query.order_by('name')]
-    
+
     if form.validate_on_submit():
         user = User()
         user.username = form.username.data
@@ -29,7 +29,7 @@ def create_user():
         user.middle_name = form.middle_name.data or ''
         user.role_id = form.role_id.data
         user.set_password(form.password.data)
-        
+
         db.session.add(user)
         try:
             db.session.commit()
@@ -38,7 +38,7 @@ def create_user():
         except Exception as e:
             db.session.rollback()
             flash('Ошибка при создании пользователя: ' + str(e), 'error')
-    
+
     return render_template('user/create.html', form=form)
 
 @main_bp.route('/user/<int:user_id>/edit', methods=['GET', 'POST'])
@@ -47,17 +47,17 @@ def edit_user(user_id):
     user = User.query.get_or_404(user_id)
     form = UserEditForm(obj=user)
     form.role_id.choices = [(r.id, r.name) for r in Role.query.order_by('name')]
-    
+
     if form.validate_on_submit():
         user.username = form.username.data
         user.last_name = form.last_name.data
         user.first_name = form.first_name.data
         user.middle_name = form.middle_name.data
         user.role_id = form.role_id.data
-        
+
         if form.password.data:
             user.set_password(form.password.data)
-        
+
         try:
             db.session.commit()
             flash('Пользователь успешно обновлен!', 'success')
@@ -65,7 +65,7 @@ def edit_user(user_id):
         except Exception as e:
             db.session.rollback()
             flash('Ошибка при обновлении пользователя: ' + str(e), 'error')
-    
+
     return render_template('user/edit.html', form=form, user=user)
 
 @main_bp.route('/user/<int:user_id>/delete', methods=['POST'])
@@ -94,7 +94,7 @@ def profile():
 def change_password():
     from app.forms import ChangePasswordForm
     form = ChangePasswordForm()
-    
+
     if form.validate_on_submit():
         if current_user.check_password(form.old_password.data):
             current_user.set_password(form.new_password.data)
@@ -103,5 +103,5 @@ def change_password():
             return redirect(url_for('main.profile'))
         else:
             flash('Неверный текущий пароль!', 'error')
-    
+
     return render_template('user/change_password.html', form=form)

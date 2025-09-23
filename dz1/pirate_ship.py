@@ -8,7 +8,6 @@ for _ in range(m):
     value = int(line[2])
     items.append((name, weight, value, value / weight))
 
-
 items.sort(key=lambda x: x[3], reverse=True)
 
 total_weight = 0

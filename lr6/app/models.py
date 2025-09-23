@@ -6,43 +6,30 @@ from werkzeug.security import check_password_hash, generate_password_hash
 from flask_login import UserMixin
 from flask import url_for
 from flask_sqlalchemy import SQLAlchemy
-from sqlalchemy.orm import DeclarativeBase
-from sqlalchemy.orm import Mapped, mapped_column, relationship
-from sqlalchemy import String, ForeignKey, Text, Integer, MetaData
+from sqlalchemy import String, ForeignKey, Text, Integer
 
+db = SQLAlchemy()
 
-class Base(DeclarativeBase):
-  metadata = MetaData(naming_convention={
-        "ix": 'ix_%(column_0_label)s',
-        "uq": "uq_%(table_name)s_%(column_0_name)s",
-        "ck": "ck_%(table_name)s_%(constraint_name)s",
-        "fk": "fk_%(table_name)s_%(column_0_name)s_%(referred_table_name)s",
-        "pk": "pk_%(table_name)s"
-    })
-
-db = SQLAlchemy(model_class=Base)
-
-class Category(Base):
+class Category(db.Model):
     __tablename__ = 'categories'
 
-    id = mapped_column(Integer, primary_key=True)
-    name: Mapped[str] = mapped_column(String(100))
-    parent_id: Mapped[Optional[int]] = mapped_column(ForeignKey("categories.id"))
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    parent_id = db.Column(db.Integer, db.ForeignKey("categories.id"))
 
     def __repr__(self):
         return '<Category %r>' % self.name
 
-
-class User(Base, UserMixin):
+class User(UserMixin, db.Model):
     __tablename__ = 'users'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    first_name: Mapped[str] = mapped_column(String(100))
-    last_name: Mapped[str] = mapped_column(String(100))
-    middle_name: Mapped[Optional[str]] = mapped_column(String(100))
-    login: Mapped[str] = mapped_column(String(100), unique=True)
-    password_hash: Mapped[str] = mapped_column(String(200))
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now)
+    id = db.Column(db.Integer, primary_key=True)
+    first_name = db.Column(db.String(100), nullable=False)
+    last_name = db.Column(db.String(100), nullable=False)
+    middle_name = db.Column(db.String(100))
+    login = db.Column(db.String(100), unique=True, nullable=False)
+    password_hash = db.Column(db.String(200), nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
     def set_password(self, password):
         self.password_hash = generate_password_hash(password)
@@ -57,23 +44,24 @@ class User(Base, UserMixin):
     def __repr__(self):
         return '<User %r>' % self.login
 
-class Course(Base):
+class Course(db.Model):
     __tablename__ = 'courses'
 
-    id: Mapped[int] = mapped_column(primary_key=True)
-    name: Mapped[str] = mapped_column(String(100))
-    short_desc: Mapped[str] = mapped_column(Text)
-    full_desc: Mapped[str] = mapped_column(Text)
-    rating_sum: Mapped[int] = mapped_column(default=0)
-    rating_num: Mapped[int] = mapped_column(default=0)
-    category_id: Mapped[int] = mapped_column(ForeignKey("categories.id"))
-    author_id: Mapped[int] = mapped_column(ForeignKey("users.id"))
-    background_image_id: Mapped[str] = mapped_column(ForeignKey("images.id"))
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now)
+    id = db.Column(db.Integer, primary_key=True)
+    name = db.Column(db.String(100), nullable=False)
+    short_desc = db.Column(db.Text)
+    full_desc = db.Column(db.Text)
+    rating_sum = db.Column(db.Integer, default=0)
+    rating_num = db.Column(db.Integer, default=0)
+    category_id = db.Column(db.Integer, db.ForeignKey("categories.id"))
+    author_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+    background_image_id = db.Column(db.String(100), db.ForeignKey("images.id"))
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
-    author: Mapped["User"] = relationship()
-    category: Mapped["Category"] = relationship(lazy=False)
-    bg_image: Mapped["Image"] = relationship()
+    author = db.relationship("User")
+    category = db.relationship("Category", lazy=False)
+    bg_image = db.relationship("Image")
+    reviews = db.relationship("Review", back_populates="course")
 
     def __repr__(self):
         return '<Course %r>' % self.name
@@ -87,13 +75,13 @@ class Course(Base):
 class Image(db.Model):
     __tablename__ = 'images'
 
-    id: Mapped[str] = mapped_column(String(100), primary_key=True)
-    file_name: Mapped[str] = mapped_column(String(100))
-    mime_type: Mapped[str] = mapped_column(String(100))
-    md5_hash: Mapped[str] = mapped_column(String(100), unique=True)
-    object_id: Mapped[Optional[int]]
-    object_type: Mapped[Optional[str]] = mapped_column(String(100))
-    created_at: Mapped[datetime] = mapped_column(default=datetime.now)
+    id = db.Column(db.String(100), primary_key=True)
+    file_name = db.Column(db.String(100), nullable=False)
+    mime_type = db.Column(db.String(100), nullable=False)
+    md5_hash = db.Column(db.String(100), unique=True, nullable=False)
+    object_id = db.Column(db.Integer)
+    object_type = db.Column(db.String(100))
+    created_at = db.Column(db.DateTime, default=datetime.now)
 
     def __repr__(self):
         return '<Image %r>' % self.file_name
@@ -106,3 +94,19 @@ class Image(db.Model):
     @property
     def url(self):
         return url_for('main.image', image_id=self.id)
+
+class Review(db.Model):
+    __tablename__ = 'reviews'
+
+    id = db.Column(db.Integer, primary_key=True)
+    rating = db.Column(db.Integer, nullable=False)
+    text = db.Column(db.Text, nullable=False)
+    created_at = db.Column(db.DateTime, default=datetime.now)
+    course_id = db.Column(db.Integer, db.ForeignKey("courses.id"))
+    user_id = db.Column(db.Integer, db.ForeignKey("users.id"))
+
+    course = db.relationship("Course", back_populates="reviews")
+    user = db.relationship("User")
+
+    def __repr__(self):
+        return f'<Review {self.id} for Course {self.course_id}>'

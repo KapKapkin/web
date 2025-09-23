@@ -19,14 +19,13 @@ def headers():
 @app.route('/cookies')
 def cookies():
     resp = make_response(render_template('cookies.html', cookies=request.cookies))
-    
-    # Если cookie 'user_visited' не установлен - устанавливаем его
+
     if 'user_visited' not in request.cookies:
         resp.set_cookie('user_visited', 'yes')
     else:
-        # Если cookie установлен - удаляем его
+
         resp.set_cookie('user_visited', '', expires=0)
-    
+
     return resp
 
 @app.route('/form_params', methods=['GET', 'POST'])
@@ -39,11 +38,10 @@ def form_params():
 def phone():
     error = None
     formatted_phone = None
-    
+
     if request.method == 'POST':
         phone_number = request.form.get('phone', '')
-        
-        # Проверяем допустимые символы: цифры, пробелы, круглые скобки, дефисы, точки, +
+
         allowed_pattern = r'^[\d\s\(\)\-\.\+]*$'
         if not re.match(allowed_pattern, phone_number):
             error = {
@@ -51,23 +49,22 @@ def phone():
                 'type': 'invalid_chars'
             }
         else:
-            # Извлекаем только цифры
+
             digits = re.sub(r'\D', '', phone_number)
-            
-            # Проверка длины в зависимости от префикса
+
             if phone_number.strip().startswith(('+7', '8')):
-                # Для +7 и 8 должно быть 11 цифр
+
                 if len(digits) != 11:
                     error = {
                         'message': 'Invalid phone number. Invalid length!',
                         'type': 'invalid_length'
                     }
                 else:
-                    # Форматирование: берем последние 10 цифр после кода страны
+
                     digits = digits[-10:]
                     formatted_phone = f"8-{digits[:3]}-{digits[3:6]}-{digits[6:8]}-{digits[8:]}"
             else:
-                # Для остальных должно быть 10 цифр
+
                 if len(digits) != 10:
                     error = {
                         'message': 'Invalid phone number. Invalid length!',
@@ -75,7 +72,7 @@ def phone():
                     }
                 else:
                     formatted_phone = f"8-{digits[:3]}-{digits[3:6]}-{digits[6:8]}-{digits[8:]}"
-    
+
     return render_template(
         'phone_form.html',
         error=error,

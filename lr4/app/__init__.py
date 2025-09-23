@@ -13,15 +13,15 @@ def load_user(user_id):
 def create_app(config_class=Config):
     app = Flask(__name__, template_folder='../templates')
     app.config.from_object(config_class)
-    
+
     db.init_app(app)
     login_manager.init_app(app)
     login_manager.login_view = 'auth.login'
     login_manager.login_message_category = 'info'
-    
+
     from app.auth import auth_bp
     from app.routes import main_bp
     app.register_blueprint(auth_bp)
     app.register_blueprint(main_bp)
-    
+
     return app

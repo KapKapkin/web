@@ -7,11 +7,10 @@ def client():
     with app.test_client() as client:
         yield client
 
-
 def test_cookies_page(client):
     response = client.get('/cookies')
     assert b'visited' not in response.data
-    
+
     response = client.get('/cookies')
     assert b'visited' in response.data
     assert b'yes' in response.data
@@ -27,7 +26,6 @@ def test_headers_page(client):
     response = client.get('/headers')
     assert b'Headers' in response.data
     assert b'User-Agent' in response.data
-
 
 def test_form_params_page_get(client):
     response = client.get('/form_params')

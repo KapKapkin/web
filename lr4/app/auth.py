@@ -31,7 +31,7 @@ def register():
     if form.validate_on_submit():
         user = User()
         user.username = form.username.data
-        user.first_name = form.username.data  # Используем username как имя по умолчанию
+        user.first_name = form.username.data
         user.set_password(form.password.data)
         db.session.add(user)
         try:

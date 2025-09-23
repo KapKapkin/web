@@ -21,13 +21,13 @@ class CourseRepository:
 
     def get_all_courses(self, name=None, category_ids=None, pagination=None):
         if pagination is not None:
-            return pagination.items 
-        
+            return pagination.items
+
         return self.db.session.execute(self._all_query(name, category_ids)).scalars()
 
     def get_course_by_id(self, course_id):
         return self.db.session.get(Course, course_id)
-    
+
     def new_course(self):
         return Course()
 
@@ -45,6 +45,6 @@ class CourseRepository:
             self.db.session.commit()
         except Exception as e:
             self.db.session.rollback()
-            raise e  # Пробрасываем любое другое исключение
-        
+            raise e
+
         return course

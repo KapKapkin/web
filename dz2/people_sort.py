@@ -11,7 +11,7 @@ if __name__ == '__main__':
             'age': int(age),
             'gender': gender
         })
-    
+
     sorted_people = people_sort(people)
     for person in sorted_people:
         title = "Mr." if person['gender'] == 'M' else "Ms."

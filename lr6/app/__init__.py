@@ -14,7 +14,7 @@ def handle_sqlalchemy_error(err):
 
 def create_app(test_config=None):
     app = Flask(__name__, instance_relative_config=False)
-    app.config.from_pyfile('config.py')
+    app.config.from_pyfile('../config.py')
 
     if test_config:
         app.config.from_mapping(test_config)

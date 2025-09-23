@@ -5,9 +5,8 @@ from app.models import User
 import re
 
 def validate_password_optional(form, field):
-    """Валидатор для необязательного пароля в форме редактирования"""
     password = field.data
-    if password:  # Проверяем только если пароль введен
+    if password:
         if len(password) < 8 or len(password) > 128:
             raise ValidationError('Password must be 8-128 characters long')
         if not re.search(r'[A-ZА-Я]', password):

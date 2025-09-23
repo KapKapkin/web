@@ -4,7 +4,7 @@ import sys
 def search_file(filename, current_path=None):
     if current_path is None:
         current_path = os.path.dirname(os.path.abspath(__file__))
-    
+
     for item in os.listdir(current_path):
         item_path = os.path.join(current_path, item)
         if os.path.isfile(item_path) and item == filename:

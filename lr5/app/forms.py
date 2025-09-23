@@ -20,20 +20,20 @@ class RegistrationForm(FlaskForm):
         Length(min=3, max=50, message='От 3 до 50 символов'),
         Regexp(r'^[a-zA-Z0-9_]+$', message='Только латинские буквы, цифры и подчеркивания')
     ])
-    
+
     first_name = StringField('Имя', validators=[
         DataRequired(message='Обязательное поле'),
         Length(min=1, max=50, message='От 1 до 50 символов')
     ])
-    
+
     last_name = StringField('Фамилия', validators=[
         Length(max=50, message='Максимум 50 символов')
     ])
-    
+
     middle_name = StringField('Отчество', validators=[
         Length(max=50, message='Максимум 50 символов')
     ])
-    
+
     password = PasswordField('Пароль', validators=[
         DataRequired(message='Обязательное поле'),
         Length(min=8, message='Минимум 8 символов'),
@@ -42,12 +42,12 @@ class RegistrationForm(FlaskForm):
             message='Пароль должен содержать: строчные и заглавные буквы, цифры, спецсимволы'
         )
     ])
-    
+
     confirm_password = PasswordField('Подтвердите пароль', validators=[
         DataRequired(message='Обязательное поле'),
         EqualTo('password', message='Пароли не совпадают')
     ])
-    
+
     submit = SubmitField('Зарегистрироваться')
 
 class UserForm(FlaskForm):
@@ -56,20 +56,20 @@ class UserForm(FlaskForm):
         Length(min=3, max=50, message='От 3 до 50 символов'),
         Regexp(r'^[a-zA-Z0-9_]+$', message='Только латинские буквы, цифры и подчеркивания')
     ])
-    
+
     first_name = StringField('Имя', validators=[
         DataRequired(message='Обязательное поле'),
         Length(min=1, max=50, message='От 1 до 50 символов')
     ])
-    
+
     last_name = StringField('Фамилия', validators=[
         Length(max=50, message='Максимум 50 символов')
     ])
-    
+
     middle_name = StringField('Отчество', validators=[
         Length(max=50, message='Максимум 50 символов')
     ])
-    
+
     password = PasswordField('Пароль', validators=[
         DataRequired(message='Обязательное поле'),
         Length(min=8, message='Минимум 8 символов'),
@@ -78,11 +78,11 @@ class UserForm(FlaskForm):
             message='Пароль должен содержать: строчные и заглавные буквы, цифры, спецсимволы'
         )
     ])
-    
+
     role_id = SelectField('Роль', coerce=int, validators=[
         DataRequired(message='Выберите роль')
     ])
-    
+
     submit = SubmitField('Создать пользователя')
 
 class UserEditForm(FlaskForm):
@@ -91,31 +91,31 @@ class UserEditForm(FlaskForm):
         Length(min=3, max=50, message='От 3 до 50 символов'),
         Regexp(r'^[a-zA-Z0-9_]+$', message='Только латинские буквы, цифры и подчеркивания')
     ])
-    
+
     first_name = StringField('Имя', validators=[
         DataRequired(message='Обязательное поле'),
         Length(min=1, max=50, message='От 1 до 50 символов')
     ])
-    
+
     last_name = StringField('Фамилия', validators=[
         Length(max=50, message='Максимум 50 символов')
     ])
-    
+
     middle_name = StringField('Отчество', validators=[
         Length(max=50, message='Максимум 50 символов')
     ])
-    
+
     role_id = SelectField('Роль', coerce=int, validators=[
         DataRequired(message='Выберите роль')
     ])
-    
+
     submit = SubmitField('Сохранить изменения')
 
 class ChangePasswordForm(FlaskForm):
     old_password = PasswordField('Текущий пароль', validators=[
         DataRequired(message='Обязательное поле')
     ])
-    
+
     new_password = PasswordField('Новый пароль', validators=[
         DataRequired(message='Обязательное поле'),
         Length(min=8, message='Минимум 8 символов'),
@@ -124,10 +124,10 @@ class ChangePasswordForm(FlaskForm):
             message='Пароль должен содержать: строчные и заглавные буквы, цифры, спецсимволы'
         )
     ])
-    
+
     confirm_password = PasswordField('Подтвердите новый пароль', validators=[
         DataRequired(message='Обязательное поле'),
         EqualTo('new_password', message='Пароли не совпадают')
     ])
-    
+
     submit = SubmitField('Изменить пароль')

@@ -3,9 +3,8 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, log
 from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key_here'  # Change this in production!
+app.secret_key = 'your_secret_key_here'
 
-# Configure Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
@@ -16,7 +15,7 @@ class User(UserMixin):
         self.id = id
         self.username = username
         self.password_hash = generate_password_hash(password)
-    
+
     def check_password(self, password):
         return check_password_hash(self.password_hash, password)
 
@@ -31,13 +30,12 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
-    # Initialize visits counter for this session if it doesn't exist
+
     if 'visits' not in session:
         session['visits'] = 0
-    
-    # Increment visits counter
+
     session['visits'] += 1
-    
+
     return render_template('index.html', visits=session['visits'])
 
 @app.route('/login', methods=['GET', 'POST'])
@@ -46,19 +44,18 @@ def login():
         username = request.form.get('username')
         password = request.form.get('password')
         remember = request.form.get('remember') == 'on'
-        
+
         user = users.get(username)
-        
+
         if user and user.check_password(password):
             login_user(user, remember=remember)
             flash('Вы успешно вошли в систему!', 'success')
-            
-            # Redirect to the originally requested page or home
+
             next_page = request.args.get('next')
             return redirect(next_page or url_for('index'))
         else:
             flash('Неверное имя пользователя или пароль', 'danger')
-    
+
     return render_template('login.html')
 
 @app.route('/logout')

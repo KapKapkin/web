@@ -1,8 +1,9 @@
 from flask import Blueprint, render_template, request, flash, redirect, url_for, abort
-from flask_login import login_required
+from flask_login import login_required, current_user
 from sqlalchemy.exc import IntegrityError
+from sqlalchemy import desc, select
 
-from app.models import db
+from app.models import db, Review
 from app.repositories import CourseRepository, UserRepository, CategoryRepository, ImageRepository
 
 user_repository = UserRepository(db)
@@ -52,7 +53,7 @@ def new():
 def create():
     f = request.files.get('background_img')
     img = None
-    course = None 
+    course = None
 
     try:
         if f and f.filename:
@@ -78,4 +79,114 @@ def show(course_id):
     course = course_repository.get_course_by_id(course_id)
     if course is None:
         abort(404)
-    return render_template('courses/show.html', course=course)
+
+    recent_reviews = db.session.execute(
+        select(Review).where(Review.course_id == course_id)
+        .order_by(desc(Review.created_at)).limit(5)
+    ).scalars().all()
+
+    user_review = None
+    if current_user.is_authenticated:
+        user_review = db.session.execute(
+            select(Review).where(
+                Review.course_id == course_id,
+                Review.user_id == current_user.id
+            )
+        ).scalar_one_or_none()
+
+    return render_template('courses/show.html',
+                         course=course,
+                         recent_reviews=recent_reviews,
+                         user_review=user_review)
+
+@bp.route('/<int:course_id>/reviews')
+def reviews(course_id):
+    course = course_repository.get_course_by_id(course_id)
+    if course is None:
+        abort(404)
+
+    sort_by = request.args.get('sort_by', 'newest')
+    page = request.args.get('page', 1, type=int)
+    per_page = 5
+
+    if sort_by == 'positive':
+        order = desc(Review.rating)
+    elif sort_by == 'negative':
+        order = Review.rating
+    else:
+        order = desc(Review.created_at)
+
+    reviews_stmt = select(Review).where(Review.course_id == course_id).order_by(order)
+
+    pagination = db.paginate(
+        reviews_stmt,
+        page=page,
+        per_page=per_page,
+        error_out=False
+    )
+
+    user_review = None
+    if current_user.is_authenticated:
+        user_review = db.session.execute(
+            select(Review).where(
+                Review.course_id == course_id,
+                Review.user_id == current_user.id
+            )
+        ).scalar_one_or_none()
+
+    return render_template('courses/reviews.html',
+                         course=course,
+                         pagination=pagination,
+                         sort_by=sort_by,
+                         user_review=user_review)
+
+@bp.route('/<int:course_id>/reviews/create', methods=['POST'])
+@login_required
+def create_review(course_id):
+    course = course_repository.get_course_by_id(course_id)
+    if course is None:
+        abort(404)
+
+    existing_review = db.session.execute(
+        select(Review).where(
+            Review.course_id == course_id,
+            Review.user_id == current_user.id
+        )
+    ).scalar_one_or_none()
+
+    if existing_review:
+        flash('Вы уже оставили отзыв к этому курсу.', 'warning')
+        return redirect(url_for('courses.show', course_id=course_id))
+
+    rating = request.form.get('rating', type=int)
+    text = request.form.get('text', '').strip()
+
+    if not text:
+        flash('Текст отзыва не может быть пустым.', 'error')
+        return redirect(url_for('courses.show', course_id=course_id))
+
+    if rating is None or rating < 0 or rating > 5:
+        flash('Некорректное значение оценки.', 'error')
+        return redirect(url_for('courses.show', course_id=course_id))
+
+    try:
+
+        review = Review(
+            rating=rating,
+            text=text,
+            course_id=course_id,
+            user_id=current_user.id
+        )
+        db.session.add(review)
+
+        course.rating_sum += rating
+        course.rating_num += 1
+
+        db.session.commit()
+        flash('Отзыв успешно добавлен!', 'success')
+
+    except IntegrityError as err:
+        db.session.rollback()
+        flash(f'Возникла ошибка при сохранении отзыва. ({err})', 'danger')
+
+    return redirect(url_for('courses.show', course_id=course_id))

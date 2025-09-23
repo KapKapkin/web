@@ -38,7 +38,6 @@ def test_python_if_else(input_data, expected):
 def test_arithmetic_operators(input_data, expected):
     assert run_script('arithmetic_operators.py', input_data).split('\n') == expected
 
-# anagram.py
 @pytest.mark.parametrize("s1,s2,expected", [
     ("abc", "cab", "YES"),
     ("abc", "def", "NO"),
@@ -62,7 +61,6 @@ def test_anagram_empty():
     result = run_script('anagram.py', ["\n", "\n"])
     assert result == "YES"
 
-# division.py
 @pytest.mark.parametrize("a,b,expected", [
     ("4", "2", ["2", "2.0"]),
     ("5", "2", ["2", "2.5"]),
@@ -78,7 +76,6 @@ def test_anagram_empty():
 def test_division(a, b, expected):
     assert run_script('division.py', [a, b]).split('\n') == expected
 
-# happiness.py
 @pytest.mark.parametrize("nm,arr,A,B,expected", [
     ("3 2\n1 2 3\n1 3\n2 4", "", "", "", "1"),
     ("4 2\n1 2 3 4\n1 2\n3 4", "", "", "", "0"),
@@ -90,11 +87,9 @@ def test_happiness(nm, arr, A, B, expected):
     input_data = nm.split('\n')
     assert run_script('happiness.py', input_data) == expected
 
-# hello.py
 def test_hello():
     assert run_script('hello.py') == 'Hello, world!'
 
-# is_leap.py
 @pytest.mark.parametrize("year,expected", [
     ("2000", "True"),
     ("1900", "False"),
@@ -110,7 +105,6 @@ def test_hello():
 def test_is_leap(year, expected):
     assert run_script('is_leap.py', [year]) == expected
 
-# lists.py
 @pytest.mark.parametrize("cmds,expected", [
     (["3", "append 1", "append 2", "print"], "[1, 2]"),
     (["4", "append 3", "insert 0 4", "print", "pop"], "[4, 3]"),
@@ -122,7 +116,6 @@ def test_lists(cmds, expected):
     output = run_script('lists.py', cmds)
     assert expected in output
 
-# loops.py
 @pytest.mark.parametrize("n,expected", [
     ("3", ["0", "1", "4"]),
     ("1", ["0"]),
@@ -142,7 +135,6 @@ def test_loops(n, expected):
     else:
         assert result == ""
 
-# matrix_mult.py
 @pytest.mark.parametrize("n,A,B,expected", [
     ("2", "1 2\n3 4", "5 6\n7 8", ["19 22", "43 50"]),
     ("1", "2", "3", ["6"]),
@@ -154,7 +146,6 @@ def test_matrix_mult(n, A, B, expected):
     input_data = [n] + A.split('\n') + B.split('\n')
     assert run_script('matrix_mult.py', input_data).split('\n') == expected
 
-# max_word.py
 def test_max_word(tmp_path):
     test_text = "cat dog elephant lion"
     file_path = tmp_path / "example.txt"
@@ -164,7 +155,6 @@ def test_max_word(tmp_path):
     result = run_script('max_word.py')
     assert "elephant" in result
 
-# metro.py
 @pytest.mark.parametrize("n,passengers,t,expected", [
     ("2", ["1 5", "6 10"], "7", "1"),
     ("3", ["1 3", "2 4", "5 7"], "2", "2"),
@@ -176,7 +166,6 @@ def test_metro(n, passengers, t, expected):
     input_data = [n] + passengers + [t]
     assert run_script('metro.py', input_data) == expected
 
-# minion_game.py
 @pytest.mark.parametrize("s,expected", [
     ("BANANA", "Stuart 12"),
     ("A", "Kevin 1"),
@@ -192,7 +181,6 @@ def test_metro(n, passengers, t, expected):
 def test_minion_game(s, expected):
     assert run_script('minion_game.py', [s]) == expected
 
-# nested_list.py
 @pytest.mark.parametrize("n,students,expected", [
     ("3", ["Harry", "37.21", "Berry", "37.21", "Tina", "37.2"], ["Berry", "Harry"]),
     ("2", ["Anna", "50", "Bob", "40"], ["Anna"]),
@@ -205,12 +193,10 @@ def test_nested_list(n, students, expected):
     output = run_script('nested_list.py', input_data).split('\n')
     assert output == expected
 
-# price_sum.py
 def test_price_sum():
     result = run_script('price_sum.py')
     assert result == '6842.84 5891.06 6810.9'
 
-# print_function.py
 @pytest.mark.parametrize("n,expected", [
     ("3", "123"),
     ("1", "1"),
@@ -230,7 +216,6 @@ def test_print_function(n, expected):
     result = run_script('print_function.py', [n]).replace('\n', '')
     assert result == expected
 
-# second_score.py
 @pytest.mark.parametrize("n,arr,expected", [
     ("5", "2 3 6 6 5", "5"),
     ("3", "1 2 3", "2"),
@@ -246,7 +231,6 @@ def test_print_function(n, expected):
 def test_second_score(n, arr, expected):
     assert run_script('second_score.py', [n, arr]) == expected
 
-# split_and_join.py
 @pytest.mark.parametrize("s,expected", [
     ("a b c", "a-b-c"),
     ("hello world", "hello-world"),
@@ -262,7 +246,6 @@ def test_second_score(n, arr, expected):
 def test_split_and_join(s, expected):
     assert run_script('split_and_join.py', [s]) == expected
 
-# swap_case.py
 @pytest.mark.parametrize("s,expected", [
     ("aBc", "AbC"),
     ("HELLO", "hello"),
@@ -278,7 +261,6 @@ def test_split_and_join(s, expected):
 def test_swap_case(s, expected):
     assert run_script('swap_case.py', [s]) == expected
 
-# pirate_ship.py
 @pytest.mark.parametrize("input_data,expected_items", [
     (["10 3", "золото 5 100", "серебро 3 60", "медь 2 20"], ["золото", "серебро", "медь"]),
     (["5 2", "алмаз 3 150", "рубин 4 200"], ["рубин", "алмаз"]),
