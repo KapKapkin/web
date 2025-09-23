@@ -2,23 +2,33 @@
 
 {% block content %}
 <h1 class="mt-5 text-center">Об авторе</h1>
-<div class="col">
-    <div class="row-md-4 mb-3">
-        <img class="avatar" src="{{ url_for('static', filename='images/avatar.jpg') }}" alt="Author">
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card shadow author-card">
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-4 text-center mb-3">
+                        <img class="avatar img-fluid rounded-circle" src="{{ url_for('static', filename='images/avatar.jpg') }}" alt="Author">
+                    </div>
+                    <div class="col-md-8 d-flex align-items-center">
+                        <div>
+                            <h3>Худяков Олег Вадимович</h3>
+                            <p class="text-muted">Студент</p>
+                            <p class="text-justify">
+                                Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea nemo illo natus 
+                                inventore. Distinctio eius consectetur similique molestias. Molestiae esse maiores 
+                                enim velit quisquam, omnis libero quam ducimus ea tempore.
+                            </p>
+                            <p class="text-justify">
+                                Lorem ipsum dolor sit, amet consectetur adipisicing elit. Exercitationem, ab? 
+                                Earum cum dolorum ipsum voluptatum quis voluptatibus ea veritatis assumenda aliquid 
+                                dolores quas, distinctio laboriosam, omnis ratione est tempora nisi.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
-    <div class="row-md-8 text-justify d-flex align-items-center">
-        <p>
-            Lorem ipsum, dolor sit amet consectetur adipisicing elit. Ea nemo illo natus 
-            inventore. Distinctio eius consectetur similique molestias. Molestiae esse maiores 
-            enim velit quisquam, omnis libero quam ducimus ea tempore.
-
-            Lorem ipsum dolor sit, amet consectetur adipisicing elit. Exercitationem, ab? 
-            Earum cum dolorum ipsum voluptatum quis voluptatibus ea veritatis assumenda aliquid 
-            dolores quas, distinctio laboriosam, omnis ratione est tempora nisi.
-        </p>
-    </div>
-
-    
-
 </div>
 {% endblock %}
