@@ -1,5 +1,3 @@
-n = int(input())
-
 def fibonacci(n):
     a, b = 0, 1
     fib = []
@@ -8,5 +6,10 @@ def fibonacci(n):
         a, b = b, a + b
     return fib
 
-cubes = list(map(lambda x: x**3, fibonacci(n)))
-print(cubes)
+def fibonacci_cubes(n):
+    return list(map(lambda x: x**3, fibonacci(n)))
+
+if __name__ == '__main__':
+    n = int(input())
+    cubes = fibonacci_cubes(n)
+    print(cubes)
