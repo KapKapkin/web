@@ -47,7 +47,7 @@ def phone():
         allowed_pattern = r'^[\d\s\(\)\-\.\+]*$'
         if not re.match(allowed_pattern, phone_number):
             error = {
-                'message': 'Недопустимый ввод. В номере телефона встречаются недопустимые символы.',
+                'message': 'Invalid phone number. Invalid symbols!',
                 'type': 'invalid_chars'
             }
         else:
@@ -59,7 +59,7 @@ def phone():
                 # Для +7 и 8 должно быть 11 цифр
                 if len(digits) != 11:
                     error = {
-                        'message': 'Недопустимый ввод. Неверное количество цифр.',
+                        'message': 'Invalid phone number. Invalid length!',
                         'type': 'invalid_length'
                     }
                 else:
@@ -70,7 +70,7 @@ def phone():
                 # Для остальных должно быть 10 цифр
                 if len(digits) != 10:
                     error = {
-                        'message': 'Недопустимый ввод. Неверное количество цифр.',
+                        'message': 'Invalid phone number. Invalid length!',
                         'type': 'invalid_length'
                     }
                 else:
