@@ -8,7 +8,7 @@ for _ in range(m):
     value = int(line[2])
     items.append((name, weight, value, value / weight))
 
-# Сортируем по удельной стоимости в убывающем порядке
+
 items.sort(key=lambda x: x[3], reverse=True)
 
 total_weight = 0
@@ -16,11 +16,9 @@ result = []
 
 for name, weight, value, ratio in items:
     if total_weight + weight <= n:
-        # Берем предмет целиком
         result.append((name, weight, value))
         total_weight += weight
     elif total_weight < n:
-        # Берем часть предмета
         remaining_capacity = n - total_weight
         fraction = remaining_capacity / weight
         fractional_weight = remaining_capacity
@@ -28,7 +26,6 @@ for name, weight, value, ratio in items:
         result.append((name, fractional_weight, fractional_value))
         break
 
-# Сортируем результат по стоимости в убывающем порядке
 result.sort(key=lambda x: x[2], reverse=True)
 
 for name, weight, value in result:
