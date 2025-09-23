@@ -40,11 +40,11 @@ def pages_report():
     """Отчет по посещениям страниц"""
     # Группируем посещения по страницам и считаем количество
     page_stats = db.session.query(
-        VisitLog.path,
+        VisitLog.page,
         func.count(VisitLog.id).label('visit_count')
-    ).group_by(VisitLog.path).order_by(desc('visit_count')).all()
+    ).group_by(VisitLog.page).order_by(desc('visit_count')).all()
     
-    return render_template('reports/pages.html', page_stats=page_stats)
+    return render_template('reports/pages_stats.html', page_stats=page_stats)
 
 @reports_bp.route('/pages/export')
 @login_required
@@ -53,9 +53,9 @@ def export_pages_csv():
     """Экспорт отчета по страницам в CSV"""
     # Получаем данные
     page_stats = db.session.query(
-        VisitLog.path,
+        VisitLog.page,
         func.count(VisitLog.id).label('visit_count')
-    ).group_by(VisitLog.path).order_by(desc('visit_count')).all()
+    ).group_by(VisitLog.page).order_by(desc('visit_count')).all()
     
     # Создаем CSV
     output = StringIO()
@@ -65,8 +65,8 @@ def export_pages_csv():
     writer.writerow(['№', 'Страница', 'Количество посещений'])
     
     # Данные
-    for i, (path, count) in enumerate(page_stats, 1):
-        writer.writerow([i, path, count])
+    for i, (page, count) in enumerate(page_stats, 1):
+        writer.writerow([i, page, count])
     
     # Создаем ответ
     response = make_response(output.getvalue())
@@ -94,7 +94,7 @@ def users_report():
     # Считаем неаутентифицированные посещения
     anonymous_count = VisitLog.query.filter_by(user_id=None).count()
     
-    return render_template('reports/users.html', 
+    return render_template('reports/users_stats.html', 
                          user_stats=user_stats, 
                          anonymous_count=anonymous_count)
 

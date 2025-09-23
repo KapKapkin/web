@@ -1,11 +1,125 @@
 {% extends "base.html" %}
 
-{% block title %}Отчёты{% endblock %}
+{% block title %}Журнал посещений{% endblock %}
 
 {% block content %}
-<h1>Статистические отчёты</h1>
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h1>
+        <i class="bi bi-clock-history"></i> 
+        {% if current_user.has_permission('view_all_visits') %}
+            Журнал посещений (все пользователи)
+        {% else %}
+            Мой журнал посещений
+        {% endif %}
+    </h1>
+</div>
 
-<div class="row">
+<!-- Журнал посещений -->
+<div class="card">
+    <div class="card-header">
+        <h5 class="card-title mb-0">
+            <i class="bi bi-list-ul"></i> Записи журнала
+        </h5>
+    </div>
+    <div class="card-body">
+        {% if visits.items %}
+            <div class="table-responsive">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Дата и время</th>
+                            <th>Страница</th>
+                            {% if current_user.has_permission('view_all_visits') %}
+                                <th>Пользователь</th>
+                            {% endif %}
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for visit in visits.items %}
+                        <tr>
+                            <td>{{ visit.created_at.strftime('%d.%m.%Y %H:%M:%S') }}</td>
+                            <td>
+                                <code>{{ visit.page }}</code>
+                            </td>
+                            {% if current_user.has_permission('view_all_visits') %}
+                                <td>
+                                    {% if visit.user %}
+                                        <span class="badge bg-primary">{{ visit.user.full_name }}</span>
+                                    {% else %}
+                                        <span class="badge bg-secondary">Анонимный пользователь</span>
+                                    {% endif %}
+                                </td>
+                            {% endif %}
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Пагинация -->
+            {% if visits.pages > 1 %}
+                <nav aria-label="Навигация по страницам">
+                    <ul class="pagination justify-content-center">
+                        {% if visits.has_prev %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('reports.index', page=visits.prev_num) }}">
+                                    <i class="bi bi-chevron-left"></i> Предыдущая
+                                </a>
+                            </li>
+                        {% endif %}
+
+                        {% for page_num in visits.iter_pages(left_edge=1, right_edge=1, left_current=1, right_current=2) %}
+                            {% if page_num %}
+                                {% if page_num != visits.page %}
+                                    <li class="page-item">
+                                        <a class="page-link" href="{{ url_for('reports.index', page=page_num) }}">{{ page_num }}</a>
+                                    </li>
+                                {% else %}
+                                    <li class="page-item active">
+                                        <span class="page-link">{{ page_num }}</span>
+                                    </li>
+                                {% endif %}
+                            {% else %}
+                                <li class="page-item disabled">
+                                    <span class="page-link">…</span>
+                                </li>
+                            {% endif %}
+                        {% endfor %}
+
+                        {% if visits.has_next %}
+                            <li class="page-item">
+                                <a class="page-link" href="{{ url_for('reports.index', page=visits.next_num) }}">
+                                    Следующая <i class="bi bi-chevron-right"></i>
+                                </a>
+                            </li>
+                        {% endif %}
+                    </ul>
+                </nav>
+            {% endif %}
+
+            <div class="mt-3 text-muted">
+                <small>
+                    <i class="bi bi-info-circle"></i>
+                    Показано {{ visits.items|length }} из {{ visits.total }} записей
+                    (страница {{ visits.page }} из {{ visits.pages }})
+                </small>
+            </div>
+        {% else %}
+            <div class="text-center py-4">
+                <i class="bi bi-inbox text-muted" style="font-size: 3rem;"></i>
+                <h4 class="text-muted mt-3">Записей не найдено</h4>
+                <p class="text-muted">Журнал посещений пуст.</p>
+            </div>
+        {% endif %}
+    </div>
+</div>
+
+<!-- Статистические отчеты (только для администраторов) -->
+{% if current_user.has_permission('view_all_visits') %}
+<div class="row mt-4">
+    <div class="col-12">
+        <h3><i class="bi bi-bar-chart"></i> Статистические отчёты</h3>
+    </div>
     <div class="col-md-6">
         <div class="card">
             <div class="card-header">
@@ -13,7 +127,9 @@
             </div>
             <div class="card-body">
                 <p>Посмотрите, какие страницы посещают чаще всего</p>
-                <a href="{{ url_for('reports.pages_stats') }}" class="btn btn-primary">Перейти к отчёту</a>
+                <a href="{{ url_for('reports.pages_report') }}" class="btn btn-primary">
+                    <i class="bi bi-file-text"></i> Перейти к отчёту
+                </a>
             </div>
         </div>
     </div>
@@ -24,9 +140,12 @@
             </div>
             <div class="card-body">
                 <p>Посмотрите активность пользователей</p>
-                <a href="{{ url_for('reports.users_stats') }}" class="btn btn-primary">Перейти к отчёту</a>
+                <a href="{{ url_for('reports.users_report') }}" class="btn btn-primary">
+                    <i class="bi bi-people"></i> Перейти к отчёту
+                </a>
             </div>
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock %}

@@ -51,7 +51,8 @@ class User(UserMixin, db.Model):
         role_permissions = {
             'Администратор': [
                 'create_user', 'edit_user', 'view_user', 'delete_user',
-                'view_all_visits', 'view_reports'
+                'view_all_visits', 'view_reports',
+                'edit_own_profile', 'view_own_profile', 'view_own_visits'
             ],
             'Пользователь': [
                 'edit_own_profile', 'view_own_profile', 'view_own_visits'
