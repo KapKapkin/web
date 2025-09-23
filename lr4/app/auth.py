@@ -29,10 +29,16 @@ def logout():
 def register():
     form = RegistrationForm()
     if form.validate_on_submit():
-        user = User(username=form.username.data)
+        user = User()
+        user.username = form.username.data
+        user.first_name = form.username.data  # Используем username как имя по умолчанию
         user.set_password(form.password.data)
         db.session.add(user)
-        db.session.commit()
-        flash('Регистрация прошла успешно!', 'success')
-        return redirect(url_for('auth.login'))
+        try:
+            db.session.commit()
+            flash('Регистрация прошла успешно!', 'success')
+            return redirect(url_for('auth.login'))
+        except Exception as e:
+            db.session.rollback()
+            flash('Ошибка при регистрации: ' + str(e), 'error')
     return render_template('auth/register.html', form=form)

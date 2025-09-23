@@ -22,14 +22,14 @@ def create_user():
     form.role_id.choices = [(r.id, r.name) for r in Role.query.order_by('name')]
     
     if form.validate_on_submit():
-        user = User(
-            username=form.username.data,
-            last_name=form.last_name.data,
-            first_name=form.first_name.data,
-            middle_name=form.middle_name.data,
-            role_id=form.role_id.data
-        )
+        user = User()
+        user.username = form.username.data
+        user.last_name = form.last_name.data or ''
+        user.first_name = form.first_name.data
+        user.middle_name = form.middle_name.data or ''
+        user.role_id = form.role_id.data
         user.set_password(form.password.data)
+        
         db.session.add(user)
         try:
             db.session.commit()
