@@ -31,8 +31,11 @@ def load_user(user_id):
 
 @app.route('/')
 def index():
+    # Initialize visits counter for this session if it doesn't exist
     if 'visits' not in session:
         session['visits'] = 0
+    
+    # Increment visits counter
     session['visits'] += 1
     
     return render_template('index.html', visits=session['visits'])
