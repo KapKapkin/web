@@ -6,3 +6,4 @@ WTForms==3.0.1
 Werkzeug==2.3.7
 pytest==7.4.2
 pytest-flask==1.2.0
+dotenv==0.9.9
