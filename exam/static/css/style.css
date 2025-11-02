@@ -1,0 +1,45 @@
+/* Custom styles for Electronic Library */
+
+.book-card {
+    transition: transform 0.2s;
+}
+
+.book-card:hover {
+    transform: translateY(-5px);
+}
+
+.book-cover {
+    height: 300px;
+    object-fit: cover;
+}
+
+.rating-stars {
+    color: #ffc107;
+}
+
+.navbar-brand {
+    font-weight: bold;
+}
+
+.footer {
+    background-color: #f8f9fa;
+    padding: 2rem 0;
+    margin-top: auto;
+}
+
+.main-content {
+    min-height: calc(100vh - 200px);
+}
+
+/* Additional utility classes */
+.min-vh-100 {
+    min-height: 100vh;
+}
+
+.d-flex {
+    display: flex;
+}
+
+.flex-column {
+    flex-direction: column;
+}

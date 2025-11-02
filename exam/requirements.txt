@@ -1,0 +1,36 @@
+Flask==3.1.0# Flask and core dependencies
+
+Flask-SQLAlchemy==3.1.1Flask>=2.3.0
+
+Flask-Migrate==4.1.0Werkzeug>=2.3.0
+
+SQLAlchemy==2.0.36
+
+PyMySQL==1.1.1# Database ORM
+
+cryptography==44.0.0Flask-SQLAlchemy>=3.0.0
+
+python-dotenv==1.0.1PyMySQL>=1.1.0
+
+Werkzeug==3.1.3
+
+bleach==6.2.0# Database migrations
+
+markdown==3.7Flask-Migrate>=4.0.0
+
+
+# Security and authentication
+bcrypt>=4.0.0
+
+# HTML sanitization and markdown processing
+bleach>=6.0.0
+Markdown>=3.5.0
+
+# File handling
+Pillow>=10.0.0
+
+# Development dependencies (optional)
+python-dotenv>=1.0.0
+
+# WSGI server for production
+gunicorn>=21.0.0

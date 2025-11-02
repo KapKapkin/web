@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Мои подборки - Электронная библиотека{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1><i class="bi bi-bookmark-star"></i> Мои подборки</h1>
+        <button type="button" class="btn btn-success" data-bs-toggle="modal" data-bs-target="#addCollectionModal">
+            <i class="bi bi-plus-circle"></i> Создать подборку
+        </button>
+    </div>
+    
+    <p class="text-muted mb-4">Создавайте и управляйте своими коллекциями книг</p>
+    
+    {% if collections %}
+        <div class="row">
+            {% for collection in collections %}
+            <div class="col-md-6 col-lg-4 mb-4">
+                <div class="card h-100 collection-card">
+                    <div class="card-body">
+                        <h5 class="card-title">
+                            <i class="bi bi-bookmark-fill text-primary"></i>
+                            {{ collection.name }}
+                        </h5>
+                        <p class="card-text text-muted">
+                            {{ collection.description or 'Без описания' }}
+                        </p>
+                        <div class="d-flex justify-content-between align-items-center">
+                            <small class="text-muted">
+                                <i class="bi bi-book"></i> {{ collection.books|length }} книг(и)
+                            </small>
+                            <small class="text-muted">
+                                {{ collection.created_at.strftime('%d.%m.%Y') }}
+                            </small>
+                        </div>
+                    </div>
+                    <div class="card-footer bg-transparent">
+                        <div class="d-flex gap-2">
+                            <a href="{{ url_for('collection_detail', collection_id=collection.id) }}" 
+                               class="btn btn-sm btn-outline-primary flex-grow-1">
+                                <i class="bi bi-eye"></i> Просмотр
+                            </a>
+                            <form method="POST" action="{{ url_for('delete_collection', collection_id=collection.id) }}" 
+                                  onsubmit="return confirm('Удалить подборку?')" class="flex-grow-1">
+                                <button type="submit" class="btn btn-sm btn-outline-danger w-100">
+                                    <i class="bi bi-trash"></i> Удалить
+                                </button>
+                            </form>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    {% else %}
+        <div class="alert alert-info text-center">
+            <i class="bi bi-info-circle fs-1 mb-3 d-block"></i>
+            <h4>У вас пока нет подборок</h4>
+            <p>Создайте свою первую подборку книг, нажав кнопку "Создать подборку"</p>
+        </div>
+    {% endif %}
+</div>
+
+<!-- Модальное окно для создания подборки -->
+<div class="modal fade" id="addCollectionModal" tabindex="-1" aria-labelledby="addCollectionModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addCollectionModalLabel">
+                    <i class="bi bi-plus-circle"></i> Создать подборку
+                </h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <form method="POST" action="{{ url_for('create_collection') }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="collectionName" class="form-label">Название подборки *</label>
+                        <input type="text" 
+                               class="form-control" 
+                               id="collectionName" 
+                               name="name" 
+                               required 
+                               maxlength="100"
+                               placeholder="Например: Любимые детективы">
+                    </div>
+                    <div class="mb-3">
+                        <label for="collectionDescription" class="form-label">Описание</label>
+                        <textarea class="form-control" 
+                                  id="collectionDescription" 
+                                  name="description" 
+                                  rows="3"
+                                  placeholder="Краткое описание подборки (необязательно)"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">
+                        Отмена
+                    </button>
+                    <button type="submit" class="btn btn-success">
+                        <i class="bi bi-check-circle"></i> Создать
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endblock %}

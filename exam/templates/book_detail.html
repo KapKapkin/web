@@ -1,0 +1,236 @@
+{% extends "base.html" %}
+
+{% block title %}{{ book.title }} - Электронная библиотека{% endblock %}
+
+{% block content %}
+<div class="container my-4">
+    <div class="row">
+        <!-- Book cover and basic info -->
+        <div class="col-md-4">
+            <div class="card">
+                {% if book.cover %}
+                <img src="{{ url_for('serve_cover', cover_id=book.cover_id) }}" 
+                     class="card-img-top" alt="{{ book.title }}" style="height: 400px; object-fit: cover;">
+                {% else %}
+                <div class="card-img-top bg-light d-flex align-items-center justify-content-center" style="height: 400px;">
+                    <i class="bi bi-book display-1 text-muted"></i>
+                </div>
+                {% endif %}
+                
+                <div class="card-body">
+                    <h5 class="card-title">{{ book.title }}</h5>
+                    <p class="card-text">
+                        <strong>Автор:</strong> {{ book.author }}<br>
+                        <strong>Год издания:</strong> {{ book.year }}<br>
+                        <strong>Издательство:</strong> {{ book.publisher }}<br>
+                        <strong>Страниц:</strong> {{ book.pages }}
+                    </p>
+                    
+                    {% if book.genres %}
+                    <div class="mb-3">
+                        <strong>Жанры:</strong><br>
+                        {% for genre in book.genres %}
+                        <span class="badge bg-secondary me-1">{{ genre.name }}</span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    
+                    {% if book.average_rating %}
+                    <div class="mb-3">
+                        <strong>Рейтинг:</strong><br>
+                        <span class="rating-stars">
+                            {% for i in range(1, 6) %}
+                                {% if i <= book.average_rating %}
+                                    <i class="bi bi-star-fill"></i>
+                                {% elif i - 0.5 <= book.average_rating %}
+                                    <i class="bi bi-star-half"></i>
+                                {% else %}
+                                    <i class="bi bi-star"></i>
+                                {% endif %}
+                            {% endfor %}
+                        </span>
+                        <span class="text-muted">({{ book.review_count }} отзывов)</span>
+                    </div>
+                    {% endif %}
+                    
+                    <!-- Action buttons -->
+                    <div class="d-grid gap-2">
+                        {% if session.user_id and user_role == 'пользователь' and not user_review %}
+                        <a href="{{ url_for('add_review', book_id=book.id) }}" class="btn btn-primary">
+                            <i class="bi bi-star"></i> Оставить отзыв
+                        </a>
+                        {% endif %}
+                        
+                        {% if session.user_id and user_role == 'пользователь' %}
+                        <button type="button" class="btn btn-outline-primary" data-bs-toggle="modal" data-bs-target="#addToCollectionModal">
+                            <i class="bi bi-collection"></i> Добавить в подборку
+                        </button>
+                        {% endif %}
+                        
+                        {% if user_role in ['администратор', 'модератор'] %}
+                        <a href="{{ url_for('edit_book', book_id=book.id) }}" class="btn btn-outline-secondary">
+                            <i class="bi bi-pencil"></i> Редактировать
+                        </a>
+                        {% endif %}
+                        
+                        {% if user_role == 'администратор' %}
+                        <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal">
+                            <i class="bi bi-trash"></i> Удалить
+                        </button>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Book description and reviews -->
+        <div class="col-md-8">
+            <!-- Description -->
+            <div class="card mb-4">
+                <div class="card-header">
+                    <h5 class="mb-0">Описание</h5>
+                </div>
+                <div class="card-body">
+                    {% if book_description_html %}
+                        {{ book_description_html | safe }}
+                    {% else %}
+                        <p class="text-muted">Описание отсутствует</p>
+                    {% endif %}
+                </div>
+            </div>
+            
+            <!-- Reviews -->
+            <div class="card">
+                <div class="card-header d-flex justify-content-between align-items-center">
+                    <h5 class="mb-0">Отзывы ({{ reviews | length }})</h5>
+                    {% if session.user_id and not user_review %}
+                    <a href="{{ url_for('add_review', book_id=book.id) }}" class="btn btn-sm btn-primary">
+                        <i class="bi bi-plus"></i> Добавить отзыв
+                    </a>
+                    {% endif %}
+                </div>
+                <div class="card-body">
+                    {% if reviews %}
+                        {% for review in reviews %}
+                        <div class="border-bottom pb-3 mb-3">
+                            <div class="d-flex justify-content-between align-items-start">
+                                <div>
+                                    <h6 class="mb-1">{{ review.user.full_name }}</h6>
+                                    <div class="rating-stars mb-2">
+                                        {% for i in range(1, 6) %}
+                                            {% if i <= review.rating %}
+                                                <i class="bi bi-star-fill"></i>
+                                            {% else %}
+                                                <i class="bi bi-star"></i>
+                                            {% endif %}
+                                        {% endfor %}
+                                    </div>
+                                </div>
+                                <small class="text-muted">{{ review.created_at.strftime('%d.%m.%Y %H:%M') }}</small>
+                            </div>
+                            <p class="mb-0">{{ review.text | safe }}</p>
+                        </div>
+                        {% endfor %}
+                    {% else %}
+                        <div class="text-center py-4">
+                            <i class="bi bi-chat-dots display-4 text-muted"></i>
+                            <p class="text-muted mt-2">Пока нет отзывов о книге</p>
+                            {% if session.user_id %}
+                            <a href="{{ url_for('add_review', book_id=book.id) }}" class="btn btn-primary">
+                                Станьте первым, кто оставит отзыв
+                            </a>
+                            {% endif %}
+                        </div>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Add to Collection Modal -->
+{% if session.user_id and user_role == 'пользователь' %}
+<div class="modal fade" id="addToCollectionModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Добавить в подборку</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <form method="POST" action="{{ url_for('add_book_to_collection', book_id=book.id) }}">
+                <div class="modal-body">
+                    <div class="mb-3">
+                        <label for="collection_id" class="form-label">Выберите подборку:</label>
+                        <select class="form-select" id="collection_id" name="collection_id" required>
+                            <option value="">-- Выберите подборку --</option>
+                        </select>
+                    </div>
+                    <div class="text-muted">
+                        <small>Если у вас нет подборок, <a href="{{ url_for('my_collections') }}">создайте новую</a></small>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                    <button type="submit" class="btn btn-primary">Добавить</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- Delete confirmation modal -->
+{% if user_role == 'администратор' %}
+<div class="modal fade" id="deleteModal" tabindex="-1">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Подтверждение удаления</h5>
+                <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body">
+                <p>Вы действительно хотите удалить книгу "{{ book.title }}"?</p>
+                <p class="text-danger"><strong>Это действие нельзя отменить!</strong></p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Отмена</button>
+                <form method="POST" action="{{ url_for('delete_book', book_id=book.id) }}" style="display: inline;">
+                    <button type="submit" class="btn btn-danger">Удалить</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+{% endblock %}
+
+{% block scripts %}
+<script>
+{% if session.user_id and user_role == 'пользователь' %}
+// Load user collections when modal is shown
+document.addEventListener('DOMContentLoaded', function() {
+    var collectionModal = document.getElementById('addToCollectionModal');
+    if (collectionModal) {
+        collectionModal.addEventListener('show.bs.modal', function () {
+            fetch('/api/user_collections')
+                .then(response => response.json())
+                .then(data => {
+                    const select = document.getElementById('collection_id');
+                    select.innerHTML = '<option value="">-- Выберите подборку --</option>';
+                    
+                    data.forEach(collection => {
+                        const option = document.createElement('option');
+                        option.value = collection.id;
+                        option.textContent = collection.name + ' (' + collection.book_count + ' книг)';
+                        select.appendChild(option);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error loading collections:', error);
+                });
+        });
+    }
+});
+{% endif %}
+</script>
+{% endblock %}
